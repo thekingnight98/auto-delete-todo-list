@@ -66,21 +66,25 @@ export default function Home() {
 
       setTargetList([...targetList, item]);
 
-      // ตั้งเวลาเพื่อย้าย item กลับไปยัง mainlist
       setTimeout(() => {
         setTargetList((current) => {
           const itemIndex = current.findIndex((i) => i.name === item.name);
           if (itemIndex > -1) {
-            // ลบ item ออกจากรายการเป้าหมาย
-            return current.filter((_, idx) => idx !== itemIndex);
+            const updatedList = current.filter((_, idx) => idx !== itemIndex);
+
+            setTodos((prevTodos) => {
+              const isAlreadyAdded = prevTodos.some(
+                ({ name }) => name === item.name
+              );
+              return isAlreadyAdded ? prevTodos : [...prevTodos, item];
+            });
+
+            return updatedList;
           }
           return current;
         });
-        // เพิ่ม item กลับเข้าไปใน mainlist
-        setTodos((prevTodos) => [...prevTodos, item]);
       }, 5000);
     } else {
-      // สำหรับ item ที่คลิกในรายการผลไม้หรือผัก, ย้ายกลับไปยังรายการหลักทันที
       const setTargetList =
         item.type === "Fruit" ? setFruitTodos : setVegetableTodos;
 
